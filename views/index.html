@@ -1,0 +1,16 @@
+{% extends "layout.html" %}
+
+{% block content %}
+  <h3>Pages</h3>
+  <hr>
+  <ul class="list-unstyled">
+    {% for page in pages %}
+      <li>
+        <a href= {{ page.route }}>{{ page.title }}</a>
+        <small>by
+          <a style="color:gray" href='/users/{{ page.author.id}}'>{{ page.author.name }}</a>
+        </small>
+      </li>
+    {% endfor %}
+  </ul>
+{% endblock %}
