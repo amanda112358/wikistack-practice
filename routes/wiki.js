@@ -21,9 +21,18 @@ router.get('/add/', (req, res, next) => {
 
 router.get('/search/', (req, res, next) => {
   const tagQuery = req.query.tags;
-  console.log('!!!!!', tagQuery);
   if (tagQuery) res.redirect(`/wiki/tags/${tagQuery}`);
   else res.render('search');
+});
+
+router.get('/tags/:tag', (req, res, next) => {
+  Page.findByTag(req.params.tag)
+  .then(pages => {
+    res.render('index', {
+      pages: pages
+    });
+  })
+  .catch(next);
 });
 
 router.post('/', (req, res, next) => {
@@ -46,6 +55,7 @@ router.post('/', (req, res, next) => {
     })
     .catch(next);
   })
+
 });
 
 router.get('/:urlTitle', (req, res, next) => {
@@ -58,17 +68,6 @@ router.get('/:urlTitle', (req, res, next) => {
   .then((page) => {
     res.render('wikipage', {
       page: page
-    });
-  })
-  .catch(next);
-})
-
-
-router.get('/tags/:tag', (req, res, next) => {
-  Page.findByTag(req.params.tag)
-  .then(pages => {
-    res.render('index', {
-      pages: pages
     });
   })
   .catch(next);
@@ -91,6 +90,48 @@ router.get('/:urlTitle/similar', (req, res, next) => {
   .catch(next);
 });
 
+router.get('/:urlTitle/delete', (req, res, next) => {
+  Page.destroy({
+    where: {
+      urlTitle: req.params.urlTitle
+    }
+  })
+  .then(() => {
+    res.redirect('/');
+  })
+  .catch(next);
+});
+
+router.get('/:urlTitle/edit', (req, res, next) => {
+  Page.findOne({
+    where: {
+      urlTitle: req.params.urlTitle
+    },
+    include: [{model: User, as: 'author'}]
+  })
+  .then(page => {
+    res.render('editpage', {
+      page: page
+    });
+  })
+  .catch(next);
+});
+
+router.post('/:urlTitle', (req, res, next) => {
+  Page.update(
+    req.body, {
+      where: {
+        urlTitle: req.params.urlTitle
+      },
+      returning: true
+    }
+  )
+  .then(values => {
+    console.log(values);
+    const updatedPage = values[1][0];
+    res.redirect(updatedPage.route);
+  })
+});
 
 // EXPORT ROUTER
 module.exports = router;

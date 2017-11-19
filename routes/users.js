@@ -12,7 +12,7 @@ const router = express.Router();
 // SET UP ROUTES
 router.get('/', (req, res, next) => {
   User.findAll()
-  .then(users => res.render('users', {
+  .then(users => res.render('userlist', {
     users: users
   }))
   .catch(next);
