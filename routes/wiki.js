@@ -19,6 +19,13 @@ router.get('/add/', (req, res, next) => {
   res.render('addpage');
 });
 
+router.get('/search/', (req, res, next) => {
+  const tagQuery = req.query.tags;
+  console.log('!!!!!', tagQuery);
+  if (tagQuery) res.redirect(`/wiki/tags/${tagQuery}`);
+  else res.render('search');
+});
+
 router.post('/', (req, res, next) => {
 
   User.findOrCreate({
@@ -55,10 +62,6 @@ router.get('/:urlTitle', (req, res, next) => {
   })
   .catch(next);
 })
-
-router.get('/search', (req, res, next) => {
-  res.render('search');
-});
 
 
 router.get('/tags/:tag', (req, res, next) => {

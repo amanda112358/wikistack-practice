@@ -89,7 +89,8 @@ Page.findByTag = function(tag){
       tags: {
         $overlap: [tag]
       }
-    }
+    },
+    include: [{model: User, as: 'author'}]
   })
 }
 
